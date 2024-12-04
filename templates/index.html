@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice-Enabled Chatbot</title>
+</head>
+<body>
+    <h1>Voice-Enabled Chatbot for Blind Users</h1>
+
+    <!-- Chat interface -->
+    <div id="chat">
+        <p id="chatOutput">Hello! How can I assist you today?</p>
+    </div>
+
+    <!-- Button to start voice input -->
+    <button onclick="startVoiceRecognition()">Start Speaking</button>
+
+    <script>
+        // Start voice recognition
+        function startVoiceRecognition() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.start();
+
+            recognition.onresult = function(event) {
+                const message = event.results[0][0].transcript;
+                document.getElementById("chatOutput").innerText = "You said: " + message;
+                sendMessageToBackend(message);
+            };
+
+            recognition.onerror = function(event) {
+                console.log("Error occurred in speech recognition: " + event.error);
+            };
+        }
+
+        // Send message to backend API
+        function sendMessageToBackend(message) {
+            fetch("http://127.0.0.1:5000/api/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const botResponse = data.response;
+                document.getElementById("chatOutput").innerText = "Bot: " + botResponse;
+                speakOut(botResponse);  // Voice response
+            })
+            .catch(error => {
+                console.log("Error sending message to backend: ", error);
+            });
+        }
+
+        // Convert bot response to speech
+        function speakOut(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            speechSynthesis.speak(utterance);
+        }
+    </script>
+</body>
+</html>
