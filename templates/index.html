@@ -16,6 +16,11 @@
             flex-direction: column;
         }
 
+        h1 {
+            color: #333;
+            margin-top: 20px;
+        }
+
         #chat {
             display: flex;
             flex-direction: column;
@@ -24,6 +29,10 @@
             width: 80%;
             max-width: 600px;
             margin-bottom: 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         #chatOutput {
@@ -43,6 +52,8 @@
             align-items: center;
             justify-content: center;
             margin: 10px 0;
+            text-align: left;
+            width: 100%;
         }
 
         .bot-response img {
@@ -72,7 +83,7 @@
     </style>
 </head>
 <body>
-    <h1>Voice-Enabled Chatbot for Blind Users</h1>
+    <h1>Voice-Enabled Chatbot </h1>
 
     <!-- Chat interface -->
     <div id="chat">
@@ -119,7 +130,7 @@
                 const botResponse = data.response;
                 const chatOutput = document.getElementById("chatOutput");
 
-                // Clear previous responses
+                // Clear previous responses to ensure only the latest is shown
                 chatOutput.innerHTML = '';
 
                 // Create a new div for the bot's response
