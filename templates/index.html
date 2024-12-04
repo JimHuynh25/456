@@ -5,101 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voice-Enabled Chatbot</title>
     <style>
-        /* Basic reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
+            background-color: lightblue; /* Light blue background */
             font-family: Arial, sans-serif;
-            background-color: #ADD8E6; /* Light blue background */
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            margin: 0;
             flex-direction: column;
-            color: #333;
-        }
-
-        #container {
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 500px;
-        }
-
-        h1 {
-            font-size: 1.8rem;
-            color: #333;
-            margin-bottom: 20px;
         }
 
         #chat {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            width: 80%;
+            max-width: 600px;
             margin-bottom: 20px;
         }
 
         #chatOutput {
-            font-size: 1.5rem;
-            color: #333;
+            font-size: 18px;
+            text-align: center;
+            margin-top: 20px;
             padding: 10px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            background-color: #fff;
+            border-radius: 8px;
+            background-color: #f0f0f0;
+            width: 100%;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .bot-response {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .bot-response img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+            border-radius: 50%;
         }
 
         button {
             padding: 10px 20px;
-            font-size: 1rem;
+            font-size: 16px;
+            background-color: #4CAF50;
             color: white;
-            background-color: #6c5ce7;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
 
         button:hover {
-            background-color: #5a4bcf;
+            background-color: #45a049;
         }
 
-        .botMessage {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;
-            color: #333;
-        }
-
-        .botImage {
-            width: 50px;
-            height: 50px;
-            margin-left: 20px;
-            border-radius: 50%;
-        }
-
-        #chatOutput {
-            margin-bottom: 15px;
+        #chatOutput p {
+            margin: 0;
         }
     </style>
 </head>
 <body>
-    <div id="container">
-        <h1>Voice-Enabled Chatbot for Blind Users</h1>
+    <h1>Voice-Enabled Chatbot for Blind Users</h1>
 
-        <!-- Chat interface -->
-        <div id="chat">
-            <p id="chatOutput">Hello! How can I assist you today?</p>
+    <!-- Chat interface -->
+    <div id="chat">
+        <!-- Bot's response will be shown here with the bot's image -->
+        <div id="chatOutput">
+            <!-- The output will be dynamically updated here -->
         </div>
-
-        <!-- Button to start voice input -->
-        <button onclick="startVoiceRecognition()">Start Speaking</button>
     </div>
 
+    <!-- Button to start voice input -->
+    <button onclick="startVoiceRecognition()">Start Speaking</button>
+
     <script>
+        const botImageUrl = "http://127.0.0.1:5000/static/aiphoto.jpg";  // Local path to your bot image
+
         // Start voice recognition
         function startVoiceRecognition() {
             const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
@@ -129,23 +117,31 @@
             .then(response => response.json())
             .then(data => {
                 const botResponse = data.response;
-                document.getElementById("chatOutput").innerText = "Bot: " + botResponse;
-                speakOut(botResponse);  // Voice response
+                const chatOutput = document.getElementById("chatOutput");
 
-                // Show bot response with image next to it
-                const chatDiv = document.createElement('div');
-                chatDiv.classList.add('botMessage');
-                
+                // Clear previous responses
+                chatOutput.innerHTML = '';
+
+                // Create a new div for the bot's response
+                const botResponseDiv = document.createElement('div');
+                botResponseDiv.classList.add('bot-response');
+
+                // Create the bot image and append it
                 const botImage = document.createElement('img');
-                botImage.classList.add('botImage');
-                botImage.src = "/static/aiphoto.jpg";  // Image path from static folder
+                botImage.src = botImageUrl;  // Use the local image path
+                botImage.alt = "Bot";
 
-                chatDiv.appendChild(botImage);
+                // Create the bot's text response and append it
                 const botText = document.createElement('p');
                 botText.innerText = botResponse;
-                chatDiv.appendChild(botText);
 
-                document.getElementById("chat").appendChild(chatDiv);
+                botResponseDiv.appendChild(botImage);
+                botResponseDiv.appendChild(botText);
+
+                // Append the bot's response to the chat
+                chatOutput.appendChild(botResponseDiv);
+
+                speakOut(botResponse);  // Voice response
             })
             .catch(error => {
                 console.log("Error sending message to backend: ", error);
